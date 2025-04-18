@@ -3,12 +3,11 @@ import datetime
 from pathlib import Path
 from typing import Annotated
 
-from pydantic_core.core_schema import SerializationInfo
-
 from base_connector.enums import LogLevelType
 from base_connector.errors import ConfigRetrievalError
 from pycti import ConnectorType
 from pydantic import BaseModel, BeforeValidator, Field, HttpUrl, PlainSerializer
+from pydantic_core.core_schema import SerializationInfo
 from pydantic_settings import (
     BaseSettings,
     NoDecode,
