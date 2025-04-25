@@ -25,7 +25,7 @@ else
   pip install -r "$test_requirements_files"
 
   echo "Running tests for $connector_dir"
-  pytest "$connector_dir/tests"
+  pytest "$connector_dir"
 
   deactivate
   rm -rf "$venv_name"
