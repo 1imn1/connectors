@@ -94,6 +94,12 @@ class S3Connector:
                     m=s3_marking
                 )
             )
+        self.s3_delete_after_import = get_config_variable(
+            "S3_DELETE_AFTER_IMPORT",
+            ["s3", "delete_after_import"],
+            config,
+            default=True,
+        )
         self.s3_interval = get_config_variable(
             "S3_INTERVAL", ["s3", "interval"], config, isNumber=True, default=5
         )
@@ -219,6 +225,7 @@ class S3Connector:
         ignored_entities = []
         data = json.loads(bundle)
         new_bundle_objects = []
+        new_bundle = []
         for obj in data["objects"]:
             included_entities.append(obj["id"])
         for obj in data["objects"]:
@@ -336,7 +343,9 @@ class S3Connector:
                 )
                 continue
             new_bundle_objects.append(obj)
-        new_bundle = self.helper.stix2_create_bundle(new_bundle_objects)
+
+        if new_bundle_objects:
+            new_bundle = self.helper.stix2_create_bundle(new_bundle_objects)
         return new_bundle
 
     def process(self):
@@ -354,12 +363,15 @@ class S3Connector:
                 content = data["Body"].read()
                 self.helper.log_info("Sending file " + o.get("Key"))
                 fixed_bundle = self.fix_bundle(content)
-                self.helper.send_stix2_bundle(bundle=fixed_bundle, work_id=work_id)
-                self.helper.log_info("Deleting file " + o.get("Key"))
-                self.s3_client.delete_object(
-                    Bucket=self.s3_bucket_name, Key=o.get("Key")
-                )
-
+                if fixed_bundle:
+                    self.helper.send_stix2_bundle(bundle=fixed_bundle, work_id=work_id)
+                else:
+                    self.helper.log_info("No content to ingest")
+                if self.s3_delete_after_import:
+                    self.helper.log_info("Deleting file " + o.get("Key"))
+                    self.s3_client.delete_object(
+                        Bucket=self.s3_bucket_name, Key=o.get("Key")
+                    )
             message = (
                 "Connector successfully run ("
                 + str(len(objects.get("Contents")))
