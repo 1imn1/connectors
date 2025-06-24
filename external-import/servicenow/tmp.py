@@ -34,8 +34,8 @@ def extract_connector_configurations(definitions: dict):
 
     custom_dict = {
         'default': {},
+        'required': [],
         'properties': {},
-        'required': []
     }
 
     for key, value in base_configurations.items():
