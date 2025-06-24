@@ -42,7 +42,7 @@ elif [ -f "$current_path/$venv_name/Scripts/activate" ]; then
   source "$current_path/$venv_name/Scripts/activate"  # Windows
 fi
 
-echo '\nInstalling requirements...'
+echo -e '\nInstalling requirements...'
 python -m pip install -q -r "$requirements_file"
 
 # Write Python version to manifest.json in the base directory
@@ -52,9 +52,7 @@ python $current_path/tmp.py > "$current_path/__infos__/connector_schema.json"
 echo "Created manifest.json in $current_path"
 
 
-
-#echo "cleanup"
-#rm $current_path/tmp.py
-#echo 'Removing virtual environment'
-#deactivate
+echo "cleanup"
+echo 'Removing virtual environment'
+deactivate
 #rm -rf "$venv_name"

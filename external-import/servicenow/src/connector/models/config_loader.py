@@ -39,9 +39,11 @@ class _ConfigLoaderOCTI(ConfigBaseSettings):
 
     # Config Loader OpenCTI
     url: HttpUrlToString = Field(
+        alias="OPENCTI_URL",
         description="The OpenCTI platform URL.",
     )
     token: str = Field(
+        alias="OPENCTI_TOKEN",
         description="The token of the user who represents the connector in the OpenCTI platform.",
     )
 
@@ -51,37 +53,46 @@ class _ConfigLoaderConnector(ConfigBaseSettings):
 
     # Config Loader Connector
     id: str = Field(
+        alias='CONNECTOR_ID',
         description="A unique UUIDv4 identifier for this connector instance.",
     )
     type: Optional[str] = Field(
+        alias='CONNECTOR_TYPE',
         default="EXTERNAL_IMPORT",
         description="Should always be set to EXTERNAL_IMPORT for this connector.",
     )
     name: Optional[str] = Field(
+        alias="CONNECTOR_NAME",
         default="ServiceNow",
         description="Name of the connector.",
     )
     scope: Optional[str] = Field(
+        alias="CONNECTOR_SCOPE",
         default="ServiceNow",
         description="The scope or type of data the connector is importing, either a MIME type or Stix Object (for information only).",
     )
     log_level: Optional[LogLevelToLower] = Field(
+        alias="CONNECTOR_LOG_LEVEL",
         default="error",
         description="Determines the verbosity of the logs.",
     )
     duration_period: Optional[timedelta] = Field(
+        alias="CONNECTOR_DURATION_PERIOD",
         default="PT24H",
         description="Duration between two scheduled runs of the connector (ISO 8601 format).",
     )
     queue_threshold: Optional[PositiveInt] = Field(
+        alias="CONNECTOR_QUEUE_THRESHOLD",
         default=None,
         description="Connector queue max size in Mbytes. Default to 500.",
     )
     run_and_terminate: Optional[bool] = Field(
+        alias="CONNECTOR_RUN_AND_TERMINATE",
         default=None,
         description="Connector run-and-terminate flag.",
     )
     send_to_queue: Optional[bool] = Field(
+        alias="CONNECTOR_SEND_TO_QUEUE",
         default=None,
         description="Connector send-to-queue flag.",
     )
@@ -108,9 +119,11 @@ class _ConfigLoaderServiceNow(ConfigBaseSettings):
 
     # Config Loader ServiceNow
     instance_name: str = Field(
+        alias="SERVICENOW_INSTANCE_NAME",
         description="Corresponds to server instance name (will be used for API requests).",
     )
     api_key: str = Field(
+        alias="SERVICENOW_API_KEY",
         description="Secure identifier used to validate access to ServiceNow APIs.",
     )
     api_version: Optional[Literal["v1", "v2"]] = Field(
@@ -162,7 +175,7 @@ class _ConfigLoaderServiceNow(ConfigBaseSettings):
     observables_default_score: Optional[PositiveInt] = Field(
         default=50,
         description="Allows you to define a default score for observables and indicators when the "
-        "‘promote_observables_as_indicators’ variable is set to True.",
+        "'promote_observables_as_indicators' variable is set to True.",
     )
     promote_observables_as_indicators: Optional[bool] = Field(
         default=True,
