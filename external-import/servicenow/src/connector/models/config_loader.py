@@ -25,11 +25,11 @@ TimedeltaInSeconds = Annotated[
 ]
 TLPToLower = Annotated[
     Literal["clear", "green", "amber", "amber+strict", "red"],
-    PlainSerializer(lambda x: " ".join(x), return_type=str),
+    PlainSerializer(lambda v: ''.join(v), return_type=str),
 ]
 LogLevelToLower = Annotated[
     Literal["debug", "info", "warn", "error"],
-    PlainSerializer(lambda x: " ".join(x), return_type=str),
+    PlainSerializer(lambda v: ''.join(v), return_type=str),
 ]
 
 
