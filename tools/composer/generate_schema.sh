@@ -6,6 +6,16 @@ set -e  # exit on error
 python_version=$(python --version)
 echo -e "Version of Python is: $python_version\n"
 
+# Create manifest json
+cat <<EOF > manifest.json
+{
+  "name": "OpenCTI Connectors contracts",
+  "contracts": []
+}
+EOF
+
+
+# For now, only for service now, need to loop into connectors directory
 current_path=$(find . -name "servicenow" | head -n 1)
 echo "$current_path"
 
@@ -13,6 +23,7 @@ echo "$current_path"
 generator_path=$(find . -name "generator.py.sample")
 cp "$generator_path" "$current_path"/generator_tmp.py
 
+# Comment waiting for the end
 #while [ "$current_path" != "/" ]; do
 #  if [ "$(basename "$current_path")" = "servicenow" ]; then
 #    base_dir="$current_path"

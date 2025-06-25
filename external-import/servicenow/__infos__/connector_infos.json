@@ -1,6 +1,6 @@
 {
-  "$id": "https://www.filigran.io/ipinfo.schema.json",
-  "title": "IpInfo connector",
+  "$id": "https://www.filigran.io/servicenow.schema.json",
+  "title": "ServiceNow connector",
   "description": "Accurate IP address data that keeps pace with secure, specific, and forward-looking use cases",
   "short_description": "",
 
