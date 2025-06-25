@@ -26,11 +26,11 @@ TimedeltaInSeconds = Annotated[
 ]
 TLPToLower = Annotated[
     Literal["clear", "green", "amber", "amber+strict", "red"],
-    PlainValidator(lambda v: v.lower() if isinstance(v, str) else v),
+    PlainSerializer(lambda x: " ".join(x), return_type=str),
 ]
 LogLevelToLower = Annotated[
     Literal["debug", "info", "warn", "error"],
-    PlainValidator(lambda v: v.lower() if isinstance(v, str) else v),
+    PlainSerializer(lambda x: " ".join(x), return_type=str),
 ]
 
 
@@ -53,11 +53,11 @@ class _ConfigLoaderConnector(ConfigBaseSettings):
 
     # Config Loader Connector
     id: str = Field(
-        alias='CONNECTOR_ID',
+        alias="CONNECTOR_ID",
         description="A unique UUIDv4 identifier for this connector instance.",
     )
     type: Optional[str] = Field(
-        alias='CONNECTOR_TYPE',
+        alias="CONNECTOR_TYPE",
         default="EXTERNAL_IMPORT",
         description="Should always be set to EXTERNAL_IMPORT for this connector.",
     )
@@ -97,14 +97,17 @@ class _ConfigLoaderConnector(ConfigBaseSettings):
         description="Connector send-to-queue flag.",
     )
     send_to_directory: Optional[bool] = Field(
+        alias="CONNECTOR_SEND_TO_DIRECTORY",
         default=None,
         description="Connector send-to-directory flag.",
     )
     send_to_directory_path: Optional[str] = Field(
+        alias="CONNECTOR_SEND_TO_DIRECTORY_PATH",
         default=None,
         description="Connector send-to-directory path.",
     )
     send_to_directory_retention: Optional[PositiveInt] = Field(
+        alias="CONNECTOR_SEND_TO_DIRECTORY_RETENTION",
         default=None,
         description="Connector send-to-directory retention in days.",
     )
@@ -127,57 +130,70 @@ class _ConfigLoaderServiceNow(ConfigBaseSettings):
         description="Secure identifier used to validate access to ServiceNow APIs.",
     )
     api_version: Optional[Literal["v1", "v2"]] = Field(
+        alias="SERVICENOW_API_VERSION",
         default="v2",
         description="ServiceNow API version used for REST requests.",
     )
     api_leaky_bucket_rate: Optional[PositiveInt] = Field(
+        alias="SERVICENOW_API_LEAKY_BUCKET_RATE",
         default=10,
         description="Bucket refill rate (in tokens per second). Controls the rate at which API calls are allowed. "
         "For example, a rate of 10 means that 10 calls can be made per second, if the bucket is not empty.",
     )
     api_leaky_bucket_capacity: Optional[PositiveInt] = Field(
+        alias="SERVICENOW_API_LEAKY_BUCKET_CAPACITY",
         default=10,
         description="Maximum bucket capacity (in tokens). Defines the number of calls that can be made immediately in a "
         "burst. Once the bucket is empty, it refills at the rate defined by 'api_leaky_bucket_rate'.",
     )
     api_retry: Optional[PositiveInt] = Field(
+        alias="SERVICENOW_API_RETRY",
         default=5,
         description="Maximum number of retry attempts in case of API failure.",
     )
     api_backoff: Optional[TimedeltaInSeconds] = Field(
+        alias="SERVICENOW_API_BACKOFF",
         default="PT30S",
         description="Exponential backoff duration between API retries (ISO 8601 duration format).",
     )
     import_start_date: Optional[date | AwareDatetime | timedelta] = Field(
+        alias="SERVICENOW_IMPORT_START_DATE",
         default="P30D",
         description="Start date of first import (ISO date format).",
     )
     state_to_exclude: Optional[list[str]] = Field(
+        alias="SERVICENOW_STATE_TO_EXCLUDE",
         default=None,
         description="List of security incident states to exclude from import.",
     )
     severity_to_exclude: Optional[list[str]] = Field(
+        alias="SERVICENOW_SEVERITY_TO_EXCLUDE",
         default=None,
         description="List of security incident severities to exclude from import.",
     )
     priority_to_exclude: Optional[list[str]] = Field(
+        alias="SERVICENOW_PRIORITY_TO_EXCLUDE",
         default=None,
         description="List of security incident priorities to exclude from import.",
     )
     comment_to_exclude: Optional[list[Literal["private", "public", "auto"]]] = Field(
+        alias="SERVICENOW_COMMENT_TO_EXCLUDE",
         default=None,
         description="List of comment types to exclude: private, public, auto",
     )
     tlp_level: Optional[TLPToLower] = Field(
+        alias="SERVICENOW_TLP_LEVEL",
         default="red",
         description="Traffic Light Protocol (TLP) level to apply on objects imported into OpenCTI.",
     )
     observables_default_score: Optional[PositiveInt] = Field(
+        alias="SERVICENOW_OBSERVABLES_DEFAULT_SCORE",
         default=50,
         description="Allows you to define a default score for observables and indicators when the "
         "'promote_observables_as_indicators' variable is set to True.",
     )
     promote_observables_as_indicators: Optional[bool] = Field(
+        alias="SERVICENOW_PROMOTE_OBSERVABLES_AS_INDICATORS",
         default=True,
         description="Boolean to promote observables into indicators.",
     )

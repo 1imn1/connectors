@@ -13,4 +13,5 @@ class ConfigBaseSettings(BaseSettings):
         extra="allow",
         # Allow both alias and field name for input
         validate_by_name=True,
-        validate_by_alias=True)
+        validate_by_alias=True,
+    )

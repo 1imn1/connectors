@@ -2,8 +2,9 @@ import json
 import os
 from collections import OrderedDict
 
-from src.connector.models import ConfigLoader
 from pydantic.json_schema import GenerateJsonSchema
+from src.connector.models import ConfigLoader
+
 
 def load_connector_infos(filename: str) -> dict:
     """
@@ -15,13 +16,14 @@ def load_connector_infos(filename: str) -> dict:
     with open(filepath, encoding="utf-8") as json_file:
         return json.load(json_file)
 
-def extract_connector_infos(schema:str):
+
+def extract_connector_infos(schema: str):
     connector_infos = load_connector_infos("connector_infos.json")
 
     key_order = []
     sorted_dict = OrderedDict()
-    key_order.append('$schema')
-    sorted_dict['$schema'] = schema
+    key_order.append("$schema")
+    sorted_dict["$schema"] = schema
 
     for key, value in connector_infos.items():
         key_order.append(key)
@@ -29,54 +31,66 @@ def extract_connector_infos(schema:str):
 
     return sorted_dict
 
+
 def extract_connector_configurations(definitions: dict):
     base_configurations = definitions
 
     custom_dict = {
-        'default': {},
-        'required': [],
-        'properties': {},
+        "default": {},
+        "required": [],
+        "properties": {},
     }
 
     for key, value in base_configurations.items():
-        extract_required_from_base = value['required']
-        custom_dict['required'].extend(extract_required_from_base)
+        extract_required_from_base = value["required"]
+        custom_dict["required"].extend(extract_required_from_base)
 
-        extract_properties_from_base = value['properties']
+        extract_properties_from_base = value["properties"]
 
         for config_name, config_value in extract_properties_from_base.items():
-            if 'default' in config_value:
-                custom_dict['default'].update({config_name:config_value['default']})
-                del config_value['default']
+            if "default" in config_value:
+                custom_dict["default"].update({config_name: config_value["default"]})
+                del config_value["default"]
 
-        custom_dict['properties'].update(extract_properties_from_base)
+        custom_dict["properties"].update(extract_properties_from_base)
 
     return custom_dict
 
-def make_connector_configurations(base_schema:dict, definitions) -> dict:
-    keys_to_extract_from_base = ['type', 'additionalProperties']
-    base_schema = {key: base_schema[key] for key in keys_to_extract_from_base if key in base_schema}
 
-    connector_configurations = base_schema | extract_connector_configurations(definitions)
+def make_connector_configurations(base_schema: dict, definitions) -> dict:
+    keys_to_extract_from_base = ["type", "additionalProperties"]
+    base_schema = {
+        key: base_schema[key] for key in keys_to_extract_from_base if key in base_schema
+    }
+
+    connector_configurations = base_schema | extract_connector_configurations(
+        definitions
+    )
 
     return connector_configurations
 
 
 class ConnectorCustomGenerator(GenerateJsonSchema):
-    def generate(self, schema, mode='validation'):
+    def generate(self, schema, mode="validation"):
         json_schema = super().generate(schema, mode=mode)
 
         connector_infos_json = extract_connector_infos(self.schema_dialect)
 
         # For connector that have properties configured for connector manager, add properties
         if json_schema["properties"]:
-            connector_configurations = make_connector_configurations(json_schema, self.definitions)
+            connector_configurations = make_connector_configurations(
+                json_schema, self.definitions
+            )
             connector_infos_json = connector_infos_json | connector_configurations
 
         return connector_infos_json
 
+
 get_connector_config = ConfigLoader
-connector_json_schema = get_connector_config.model_json_schema(by_alias=True, schema_generator=ConnectorCustomGenerator)
+
+connector_json_schema = get_connector_config.model_json_schema(
+    by_alias=True, schema_generator=ConnectorCustomGenerator
+)
 
 format_connector_schema = json.dumps(connector_json_schema, indent=2)
 print(format_connector_schema)
