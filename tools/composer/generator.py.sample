@@ -2,6 +2,7 @@
 This script is used for generating a JSON schema model purpose.
 For allowing connector to use this generator, you MUST import your config.
 The connector configuration MUST use `pydantic` or `pydantic-settings` Python libraries.
+The config classname model MUST be called ConfigLoader and comes from src.connector.models
 """
 import json
 import os
