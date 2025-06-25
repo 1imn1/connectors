@@ -2,11 +2,16 @@
 
 set -e  # exit on error
 
-current_path=$(find . -name "servicenow" | head -n 1)
-echo $current_path
+# Get Python version
+python_version=$(python --version)
+echo -e "Version of Python is: $python_version\n"
 
-# Create script if not exist
-touch $current_path/tmp.py
+current_path=$(find . -name "servicenow" | head -n 1)
+echo "$current_path"
+
+# Copy generator sample in generator_tmp.py
+generator_path=$(find . -name "generator.py.sample")
+cp "$generator_path" "$current_path"/generator_tmp.py
 
 #while [ "$current_path" != "/" ]; do
 #  if [ "$(basename "$current_path")" = "servicenow" ]; then
@@ -21,10 +26,6 @@ touch $current_path/tmp.py
 #  echo "servicenow base directory not found"
 #  exit 1
 #fi
-
-# Get Python version
-python_version=$(python --version)
-echo -e "Version of Python is: $python_version\n"
 
 # Install dependencies
 requirements_file=$(find $current_path -name "requirements.txt")
@@ -46,11 +47,10 @@ echo -e '\nInstalling requirements...'
 python -m pip install -q -r "$requirements_file"
 
 # Write Python version to manifest.json in the base directory
-echo -e "\nRun script and generate schema..."
+echo -e "\nRun script and generate schema...\n"
 
-python $current_path/tmp.py > "$current_path/__infos__/connector_schema.json"
-echo "Created manifest.json in $current_path"
-
+python $current_path/generator_tmp.py > "$current_path/__infos__/connector_schema.json"
+echo "Created connector schema in $current_path"
 
 echo "cleanup"
 echo 'Removing virtual environment'
