@@ -7,7 +7,6 @@ from pydantic import (
     Field,
     HttpUrl,
     PlainSerializer,
-    PlainValidator,
     PositiveInt,
     field_validator,
 )
