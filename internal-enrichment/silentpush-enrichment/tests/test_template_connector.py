@@ -2,9 +2,11 @@
 
 # from .common_fixtures import setup_config # noqa: F401
 
+# @TODO: elaborate proper tests
+
 
 # @pytest.mark.usefixtures("setup_config")
-class TestServiceNowConnector(object):
+class TestTemplateConnector(object):
     def test_to_do(self) -> None:
         """
         Check if running test works
