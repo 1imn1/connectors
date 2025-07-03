@@ -15,6 +15,6 @@
   "images": "[VARIABLE]",
   "support_version": ">= 6.5.1",
   "trial_link": null,
-  "subscription_link": "https://ipinfo.io/contact",
-  "source_code": "https://github.com/OpenCTI-Platform/connectors/tree/master/internal-enrichment/ipinfo"
+  "subscription_link": "https://www.servicenow.com/contact-us.html",
+  "source_code": "https://github.com/OpenCTI-Platform/connectors/tree/master/external-import/servicenow"
 }

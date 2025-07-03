@@ -1,2 +1,2 @@
-connector_schema:
-	sh ./tools/composer/generate_schema.sh
+connectors_manifest:
+	sh ./shared/tools/composer/manifest_generator.sh
