@@ -143,11 +143,21 @@ class _ConnectorConfig(_ConfigBaseModel):
     Define config specific to this type of connector, e.g. an `external-import`.
     """
 
-    id: str
-    name: str
-    type: str = "EXTERNAL_IMPORT"
-    scope: ListFromString
-    # duration_period: timedelta
+    id: str = Field(
+        description="A UUID v4 to identify the connector in OpenCTI.",
+    )
+    name: str = Field(
+        description="The name of the connector.",
+    )
+    type: Literal["EXTERNAL_IMPORT"] = "EXTERNAL_IMPORT"
+    scope: ListFromString = Field(
+        description="The scope of the connector, e.g. 'misp'.",
+        default=["misp"],
+    )
+    duration_period: timedelta = Field(
+        description="The period of time to await between two runs of the connector.",
+        default=timedelta(minutes=5),
+    )
 
     log_level: Literal[
         "debug",
@@ -318,11 +328,6 @@ class _MISPConfig(_ConfigBaseModel):
         description="Whether to import unsupported observable as x_opencti_text or not (just with the value).",
         default=True,
     )
-    # TODO: to remove (replaced by duration_period)
-    interval: int = Field(
-        description="Interval period of time (in minutes) to await between two connector's run.",
-        deprecated=True,
-    )
     # ? What does it mean ??
     propagate_labels: Optional[bool] = Field(
         description="Whether to apply labels from MISP events to OpenCTI observables on top of MISP Attribute labels or not.",
@@ -335,7 +340,7 @@ class ConfigLoader(BaseSettings, ABC):
     Define a complete config for a connector with:
         - opencti: the config specific to OpenCTI
         - connector: the config specific to the `external-import` connectors
-        - [custom_config]: (Optional) the config specific to the finale connector
+        - misp: the config specific to the MISP connector
     """
 
     opencti: _OpenCTIConfig
@@ -393,3 +398,22 @@ class ConfigLoader(BaseSettings, ABC):
         if Path(settings_cls.model_config["env_file"] or "").is_file():  # type: ignore
             return (dotenv_settings,)
         return (env_settings,)
+
+    @model_validator(mode="before")
+    @classmethod
+    def migrate_deprecated_interval(cls, data: dict) -> dict:
+        """
+        Env var `MISP_INTERVAL` is deprecated.
+        This is a workaround to keep the old config working while we migrate to `CONNECTOR_DURATION_PERIOD`.
+        """
+        connector_data: dict = data.get("connector", {})
+        misp_data: dict = data.get("misp", {})
+
+        if interval := misp_data.pop("interval", None):
+            warnings.warn(
+                "Env var 'MISP_INTERVAL' is deprecated. Use 'CONNECTOR_DURATION_PERIOD' instead."
+            )
+
+            connector_data["duration_period"] = timedelta(minutes=int(interval))
+
+        return data
