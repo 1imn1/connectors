@@ -7,18 +7,21 @@ get_version = os.getenv("CIRCLE_TAG")
 manifest = {"name": "OpenCTI Connectors contracts", "contracts": []}
 
 # Find all contracts
-json_files = []
+all_connector_schemas = []
 
 for root, dirs, files in os.walk("."):
     for file in files:
         if file.endswith("connector_schema.json"):
-            json_files.append(os.path.join(root, file))
+            all_connector_schemas.append(os.path.join(root, file))
 
 # Add in manifest.json file
-for connector_contract in json_files:
+for connector_contract in all_connector_schemas:
     with open(connector_contract, encoding="utf-8") as file:
-        test = json.load(file)
-        manifest["contracts"].append(test)
+        connector_contract_schema = json.load(file)
+
+        # Add in manifest if and only if manager_supported=true
+        if connector_contract_schema["manager_supported"]:
+            manifest["contracts"].append(connector_contract_schema)
 
 # Format manifest
 manifest = json.dumps(manifest, indent=2)
