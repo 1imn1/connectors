@@ -442,10 +442,10 @@ class Misp:
                 event_markings = [marking_tlp_clear]
             # Elements
             event_elements = self.prepare_elements(
-                event.Event.Galaxy or [],
-                event.Event.Tag or [],
-                author,
-                event_markings,
+                galaxies=event.Event.Galaxy or [],
+                tags=event.Event.Tag or [],
+                author=author,
+                markings=event_markings,
             )
             self.helper.log_info(
                 "This event contains " + str(len(event_elements)) + " related elements"
@@ -541,12 +541,12 @@ class Misp:
                         self.config.misp.import_unsupported_observables_as_text_transparent
                     ):
                         if len(object.Attribute) > 0:
-                            value = object.Attribute[0]["value"]
+                            value = object.Attribute[0].value
                             object_observable = CustomObservableText(
                                 value=value,
                                 object_marking_refs=event_markings,
                                 custom_properties={
-                                    "description": object["description"],
+                                    "description": object.description,
                                     "x_opencti_score": self.threat_level_to_score(
                                         event_threat_level
                                     ),
@@ -957,7 +957,7 @@ class Misp:
                 )
                 pattern = genuine_pattern
 
-            to_ids = attribute["to_ids"]
+            to_ids = attribute.to_ids
 
             score = self.threat_level_to_score(event_threat_level)
             if self.config.misp.import_to_ids_no_score is not None and not to_ids:
