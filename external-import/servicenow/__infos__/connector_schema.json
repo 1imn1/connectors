@@ -6,7 +6,7 @@
   "short_description": "",
   "manager_supported": true,
   "container_version": "[VARIABLE]",
-  "container_image": "opencti/connector-[VARIABLE]",
+  "container_image": "opencti/connector-servicenow:6.7.0",
   "container_type": "[VARIABLE]",
   "verified": true,
   "last_verified_date": "15-06-2025",

@@ -10,7 +10,7 @@ from collections import OrderedDict
 
 from pydantic.json_schema import GenerateJsonSchema
 # Import your configuration model
-from src import ConfigLoader
+from src.__init_config__ import ConfigLoader
 
 
 class ConnectorContractGenerator:

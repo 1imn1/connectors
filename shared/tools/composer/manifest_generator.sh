@@ -2,12 +2,13 @@
 
 set -e  # exit on error
 
-# Method to activate venv
 activate_venv() {
+    # Method to activate isolate venv
+
     # Install dependencies
     requirements_file=$(find "$1" -name "requirements.txt")
 
-    # Create isolated virtual environment
+    # Create isolated virtual environment in connector path
     venv_name=".temp_venv"
     echo '> Creating isolated virtual environment...'
     python -m venv "$1/$venv_name"
@@ -24,6 +25,7 @@ activate_venv() {
     # -qq: Hides both informational and warning messages, showing only errors.
     python -m pip install -qq -r "$requirements_file"
 
+    # Check if venv is well created
     venv_exists=$(find "$1" -name ".temp_venv")
 
     if [ -d "$venv_exists" ]; then
@@ -34,17 +36,19 @@ activate_venv() {
 }
 
 deactivate_venv() {
-      echo -e "\n> Clean Up environment..."
-      deactivate
-      rm -rf "$1"
+    # Method to deactivate venv and remove the folder
+    echo -e "\n> Clean Up environment..."
+    deactivate
+    echo "> Removing temp venv..."
+    rm -rf "$1"
 }
 
-## Find all parents directory of connector with config loader
-## printf action with the %h format specifier, which prints the directory part (parent directory) of the file path
+# Find all parents directory of connector with config loader
+# printf action with the %h format specifier, which prints the directory part (parent directory) of the file path
 connector_directories_path=$(find . -name "__infos__" -printf '%h\n')
 echo -e "Generate contract for: " "\n$connector_directories_path"
 
-## Loop in each connector directory with infos
+# Loop in each connector directory with infos
 for connector_directory_path in $connector_directories_path
 do
   if [ -d "$connector_directory_path" ]; then
@@ -56,17 +60,16 @@ do
     # apply generator
     python "$connector_directory_path""/generator_tmp.py"
 
-    # TODO steps
-    # clean up
-    # remove tmp_schema_generator
-    rm "$connector_directory_path""/generator_tmp.py"
+    # Clean up
+    # Remove tmp_schema_generator
+    rm "$connector_directory_path/generator_tmp.py"
 
     deactivate_venv "$connector_directory_path/$venv_name"
   fi
 done
 
 generate_manifest=$(find . -name "generate_manifest.py")
-echo "$generate_manifest"
+echo -e "\nGenerating manifest file..."
 python "$generate_manifest"
 
 

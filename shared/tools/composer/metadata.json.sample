@@ -4,7 +4,7 @@
   "description": "CHANGEME",
   "short_description": "CHANGEME",
 
-  "manager_supported": true,
+  "manager_supported": false,
   "container_version": "OCTI_VERSION",
   "container_image": "opencti/connector-CONNECTOR_NAME",
   "container_type": "CONNECTOR_TYPE",
