@@ -62,9 +62,9 @@ do
 
     # Clean up
     # Remove tmp_schema_generator
-    rm "$connector_directory_path/generator_tmp.py"
+#    rm "$connector_directory_path/generator_tmp.py"
 
-    deactivate_venv "$connector_directory_path/$venv_name"
+#    deactivate_venv "$connector_directory_path/$venv_name"
   fi
 done
 
@@ -72,4 +72,12 @@ generate_manifest=$(find . -name "generate_manifest.py")
 echo -e "\nGenerating manifest file..."
 python "$generate_manifest"
 
+# Ensure manifest is created
+manifest_exists=$(find "$(pwd)" -name "manifest.json")
+
+if [ -f "$manifest_exists" ]; then
+  echo "✅- Manifest well created !"
+else
+  echo "❌- Manifest not created !"
+fi
 
