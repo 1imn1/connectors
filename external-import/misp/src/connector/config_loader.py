@@ -1,4 +1,3 @@
-import __main__
 import os
 import warnings
 from abc import ABC
@@ -6,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Annotated, Literal, Optional
 
+import __main__
 from pydantic import (
     AwareDatetime,
     BaseModel,

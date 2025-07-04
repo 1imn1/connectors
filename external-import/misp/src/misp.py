@@ -13,6 +13,7 @@ from api_client.models import (
     GalaxyItem,
     TagItem,
 )
+from connector.config_loader import ConfigLoader
 from pycti import (
     AttackPattern,
     CustomObservableHostname,
@@ -32,7 +33,6 @@ from pycti import (
     Tool,
 )
 from pymisp import PyMISP
-from connector.config_loader import ConfigLoader
 
 PATTERNTYPES = ["yara", "sigma", "pcre", "snort", "suricata"]
 OPENCTISTIX2 = {
@@ -1014,8 +1014,8 @@ class Misp:
             to_ids = attribute["to_ids"]
 
             score = self.threat_level_to_score(event_threat_level)
-            if self.import_to_ids_no_score is not None and not to_ids:
-                score = self.import_to_ids_no_score
+            if self.config.misp.import_to_ids_no_score is not None and not to_ids:
+                score = self.config.misp.import_to_ids_no_score
 
             indicator = None
             if self.config.misp.create_indicators and pattern is not None:
@@ -2121,7 +2121,7 @@ class Misp:
                     )
                 return [{"resolver": resolver_0, "type": type_0, "value": value}]
         # If not found, return text observable as a fallback
-        if self.import_unsupported_observables_as_text:
+        if self.config.misp.import_unsupported_observables_as_text:
             return [
                 {
                     "resolver": "text",
