@@ -330,7 +330,7 @@ class Misp:
         for event in events:
             self.helper.log_info("Processing event " + event.Event.uuid)
             event_timestamp = int(
-                getattr(event.Event, self.config.misp.datetime_attribute, None)
+                getattr(event.Event, self.config.misp.datetime_attribute, "0")
             )
             # need to check if timestamp is more recent than the previous event since
             # events are not ordered by timestamp in API response
@@ -338,7 +338,7 @@ class Misp:
                 last_event_timestamp = event_timestamp
             # Check against filter
             if (
-                self.config.misp.import_creator_orgs is not None
+                self.config.misp.import_creator_orgs
                 and event.Event.Orgc.name not in self.config.misp.import_creator_orgs
             ):
                 self.helper.log_info(
@@ -348,7 +348,7 @@ class Misp:
                 )
                 continue
             if (
-                self.config.misp.import_creator_orgs_not is not None
+                self.config.misp.import_creator_orgs_not
                 and event.Event.Orgc.name in self.config.misp.import_creator_orgs_not
             ):
                 self.helper.log_info(
@@ -358,7 +358,7 @@ class Misp:
                 )
                 continue
             if (
-                self.config.misp.import_owner_orgs is not None
+                self.config.misp.import_owner_orgs
                 and event.Event.Org.name not in self.config.misp.import_owner_orgs
             ):
                 self.helper.log_info(
@@ -368,7 +368,7 @@ class Misp:
                 )
                 continue
             if (
-                self.config.misp.import_owner_orgs_not is not None
+                self.config.misp.import_owner_orgs_not
                 and event.Event.Org.name in self.config.misp.import_owner_orgs_not
             ):
                 self.helper.log_info(
@@ -378,7 +378,7 @@ class Misp:
                 )
                 continue
             if (
-                self.config.misp.import_distribution_levels is not None
+                self.config.misp.import_distribution_levels
                 and event.Event.distribution
                 not in self.config.misp.import_distribution_levels
             ):
@@ -389,7 +389,7 @@ class Misp:
                 )
                 continue
             if (
-                self.config.misp.import_threat_levels is not None
+                self.config.misp.import_threat_levels
                 and event.Event.threat_level_id
                 not in self.config.misp.import_threat_levels
             ):
@@ -399,11 +399,7 @@ class Misp:
                     + " not in import_threat_levels, do not import"
                 )
                 continue
-            if (
-                self.config.misp.import_only_published is not None
-                and self.config.misp.import_only_published
-                and not event.Event.published
-            ):
+            if self.config.misp.import_only_published and not event.Event.published:
                 self.helper.log_info(
                     "Event is not published and import_only_published is set, do not import"
                 )

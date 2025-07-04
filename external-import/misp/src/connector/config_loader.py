@@ -224,8 +224,7 @@ class _MISPConfig(_ConfigBaseModel):
     # ? What does it means??
     report_description_attribute_filter: Optional[dict] = Field(
         description="Filter to use to find the attribute with report description (example: 'type=comment,category=Internal reference')",
-        default=None,
-        # default="type=comment,category=Internal reference"
+        default={},
     )
     # ? What does it means??
     create_object_observables: Optional[bool] = Field(
