@@ -6,7 +6,9 @@ import requests
 class Downloader:
     def __init__(self, conf):
         # connection
-        self.api_url = str(conf.get("baseurl", "https://api.cyberthreattech.ru/v1/"))
+        self.api_url = str(conf.get("baseurl", "https://api.cyberthreattech.ru/v1/")).rstrip(
+            "/"
+        )
         self.api_key = str(conf.get("apikey", "REPLACEME"))
         self.timeout = (
             int(conf.get("contimeout", 30)),
@@ -29,9 +31,11 @@ class Downloader:
             path = f"threatfeed_{ioctype}_{mapping[fdate]}.{filetype}.gz"
         apiurl = f"{self.api_url}/{ioctype}?type={filetype}&date={mapping[fdate]}"
         headers = {
-            "User-Agent": "opencti_rst_threat_feed",
+            "User-Agent": "opencti_ctt_threat_feed",
             "Accept": "*/*",
+            # Some gateways are case-sensitive on header keys; send both variants.
             "X-Api-Key": self.api_key,
+            "x-api-key": self.api_key,
         }
         try:
             proxies = {"https": self.proxy} if self.proxy else None
