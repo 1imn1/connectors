@@ -27,39 +27,75 @@ class Downloader:
             "4h": "4h_latest",
             "12h": "12h_latest",
         }
+        date_value = mapping.get(fdate, fdate)
+        date_candidates = [date_value]
+        if date_value.endswith("_latest"):
+            date_candidates.append(date_value.replace("_latest", ""))
+
         if not path:
-            path = f"threatfeed_{ioctype}_{mapping[fdate]}.{filetype}.gz"
-        apiurl = f"{self.api_url}/{ioctype}?type={filetype}&date={mapping[fdate]}"
+            path = f"threatfeed_{ioctype}_{date_value}.{filetype}.gz"
+
         headers = {
             "User-Agent": "opencti_ctt_threat_feed",
-            "Accept": "*/*",
+            "Accept": "application/json",
             # Some gateways are case-sensitive on header keys; send both variants.
             "X-Api-Key": self.api_key,
             "x-api-key": self.api_key,
         }
-        try:
-            proxies = {"https": self.proxy} if self.proxy else None
-            r = requests.get(
-                apiurl, headers=headers, proxies=proxies, timeout=self.timeout
-            )
-        except Exception as ex:
-            return {"status": "error", "message": str(ex)}
+        proxies = {"https": self.proxy} if self.proxy else None
 
-        try:
-            if r.status_code == 200:
-                data = zlib.decompress(r.content, 16 + zlib.MAX_WBITS)
-                with open(path, "wb") as f:
-                    f.write(data)
-                return {"status": "ok", "message": path}
-            else:
+        attempts = []
+        for param_name in ("date", "period"):
+            for candidate in date_candidates:
+                apiurl = f"{self.api_url}/{ioctype}"
+                try:
+                    r = requests.get(
+                        apiurl,
+                        headers=headers,
+                        proxies=proxies,
+                        timeout=self.timeout,
+                        params={"type": filetype, param_name: candidate},
+                    )
+                except Exception as ex:
+                    return {
+                        "status": "error",
+                        "message": str(ex),
+                        "url": apiurl,
+                        "params": {"type": filetype, param_name: candidate},
+                    }
+
+                if r.status_code == 200:
+                    try:
+                        data = zlib.decompress(r.content, 16 + zlib.MAX_WBITS)
+                        with open(path, "wb") as f:
+                            f.write(data)
+                        return {
+                            "status": "ok",
+                            "message": path,
+                            "url": r.url,
+                            "code": r.status_code,
+                        }
+                    except Exception as ex:
+                        return {
+                            "status": "error",
+                            "message": str(ex),
+                            "url": r.url,
+                            "code": r.status_code,
+                        }
+
                 try:
                     error_body = r.json()
                 except ValueError:
                     error_body = r.text
-                return {
-                    "status": "error",
-                    "message": error_body,
-                    "code": r.status_code,
-                }
-        except Exception as ex:
-            return {"status": "error", "message": str(ex)}
+                attempts.append(
+                    {
+                        "url": r.url,
+                        "code": r.status_code,
+                        "body": error_body,
+                    }
+                )
+
+        return {
+            "status": "error",
+            "message": attempts,
+        }
