@@ -1,0 +1,21 @@
+{
+  "title": "CTT Threat Feed",
+  "slug": "ctt-threat-feed",
+  "description": "The CTT Threat Feed Connector integrates Cyber Threat Technology threat intelligence feeds into OpenCTI. This connector imports Indicators (IP, Domain, URL, Hash) with their relationships to malware, TTPs, tools, threat groups, sectors, CVE, and other objects. This enhances the capability of OpenCTI by providing actionable threat intelligence data, allowing users to make informed decisions based on the latest information from the CTT Threat Feed.\nThe feed delivers approximately 200K indicators daily, with the ability to filter by score. Each indicator has an individual score, allowing OpenCTI to keep indicator scores updated when inactive indicators become active again. Scoring is aligned with OpenCTI scoring algorithms and allows you to set a custom decay speed in your platform.\nData scored between 0 and 20 is typically considered noisy. Data with a score of 45+ is used in SIEMs for real-time detection, while data scored 55+ is used for active blocking. However, everyone can set their own thresholds to find the optimal balance for their needs.\nData can be retrieved every hour or daily, depending on the use case. The feed includes multiple threat categories.",
+  "short_description": "The CTT Threat Feed Connector integrates Cyber Threat Technology threat intelligence feeds into OpenCTI. It imports indicators and their relationships (malware, TTPs, tools, threat groups, sectors, CVE, and more) to provide actionable threat intelligence from the CTT feed.",
+  "logo": "external-import/ctt-threat-feed/__metadata__/logo.png",
+  "use_cases": [
+    "Commercial Threat Intel"
+  ],
+  "verified": true,
+  "last_verified_date": null,
+  "playbook_supported": false,
+  "max_confidence_level": 50,
+  "support_version": ">=5.12.0",
+  "subscription_link": null,
+  "source_code": "https://github.com/1imn1/connectors/tree/master/external-import/ctt-threat-feed",
+  "manager_supported": false,
+  "container_version": "rolling",
+  "container_image": "opencti/connector-ctt-threat-feed",
+  "container_type": "EXTERNAL_IMPORT"
+}
