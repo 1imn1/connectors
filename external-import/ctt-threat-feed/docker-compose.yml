@@ -1,0 +1,32 @@
+version: '3'
+services:
+  connector-ctt-threat-feed:
+    image: opencti/connector-ctt-threat-feed:rolling
+    environment:
+      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
+      - CONNECTOR_ID=9288e3aa-3f94-4505-b31b-69585c47081b
+      - CONNECTOR_NAME=CTT Threat Feed
+      - CONNECTOR_SCOPE=application/json
+      - CONNECTOR_LOG_LEVEL=info
+      - CTT_THREAT_FEED_BASEURL=https://api.cyberthreattech.ru/v1/
+      - CTT_THREAT_FEED_APIKEY=${CTT_THREAT_FEED_API_KEY}
+      - CTT_THREAT_FEED_CONTIMEOUT=30
+      - CTT_THREAT_FEED_READTIMEOUT=60
+      - CTT_THREAT_FEED_RETRY=5
+      - CTT_THREAT_FEED_INTERVAL=86400
+      - CTT_THREAT_FEED_SSL_VERIFY=true
+      - CTT_THREAT_FEED_IP=true
+      - CTT_THREAT_FEED_DOMAIN=true
+      - CTT_THREAT_FEED_URL=true
+      - CTT_THREAT_FEED_HASH=true
+      - CTT_THREAT_FEED_LATEST=1h #1h or 4h or 12h or day
+      - CTT_THREAT_FEED_MIN_SCORE_IMPORT=20
+      - CTT_THREAT_FEED_MIN_SCORE_DETECTION_IP=45
+      - CTT_THREAT_FEED_MIN_SCORE_DETECTION_DOMAIN=45
+      - CTT_THREAT_FEED_MIN_SCORE_DETECTION_URL=45
+      - CTT_THREAT_FEED_MIN_SCORE_DETECTION_HASH=45
+      - CTT_THREAT_FEED_ONLY_NEW=true
+    restart: always
+    depends_on:
+      - opencti
