@@ -93,6 +93,19 @@ class CTTThreatFeed:
     @staticmethod
     def get_config(name: str, config, default=None):
         env_name = f"CTT_THREAT_FEED_{name.upper()}"
+        alias_envs = {
+            "baseurl": ["CTT_API_URL"],
+            "apikey": ["CTT_API_KEY"],
+            "only_new": ["CTT_ONLY_NEW"],
+            "min_score_import": ["CTT_MIN_SCORE"],
+            "latest": ["CTT_LATEST"],
+        }
+
+        for alias in alias_envs.get(name, []):
+            alias_val = os.getenv(alias)
+            if alias_val is not None:
+                return alias_val
+
         result = get_config_variable(env_name, ["ctt-threat-feed", name], config)
         if result is not None:
             return result
